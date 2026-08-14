@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transit Ticket UI Demo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{background:#f3f4f6;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:30px 15px}
+.workspace-wrapper{display:flex;gap:40px;width:100%;max-width:900px;justify-content:center;align-items:flex-start}
+.app-screen-viewport{width:100%;max-width:390px;height:800px;background:#2b88d9;display:flex;flex-direction:column;border-radius:40px;border:12px solid #1c1c1e;box-shadow:0 15px 35px rgba(0,0,0,.3);overflow:hidden;position:relative}
+.app-header-title{color:#fff;text-align:center;padding:24px 0 14px;font-size:1.15rem;font-weight:500}
+.demo-label{position:absolute;top:58px;right:12px;background:#ff3b30;color:#fff;font-size:10px;font-weight:800;padding:4px 7px;border-radius:5px;z-index:2}
+.ticket-container-box{background:#fff;border-radius:28px 28px 0 0;flex-grow:1;padding:30px 24px;display:flex;flex-direction:column;align-items:center}
+.qr-border-frame{border:12px solid #a6a6a6;border-radius:12px;padding:8px;background:#fff;transition:border-color .3s}
+.qr-placeholder{width:190px;height:190px;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,#111 0 6px,#fff 6px 12px);position:relative}
+.qr-placeholder span{background:#fff;border:2px solid #111;padding:8px;font-size:12px;font-weight:800}
+.action-subtext{color:#222;font-size:.85rem;font-weight:500;margin:10px 0 16px}
+.dashed-split-separator{width:100%;border-top:1.5px dashed #ddd;margin-bottom:24px}
+.text-data-alignment-box{text-align:center;flex-grow:1;width:100%}
+.ticket-badge-alert-text{color:#ff3b30;font-size:2.1rem;font-weight:800;letter-spacing:.8px;margin-bottom:2px}
+.ticket-zone-id-value{font-size:3.4rem;font-weight:700;color:#000;line-height:1.1}
+.ticket-classification-label{font-size:1.4rem;font-weight:700;color:#000;margin-bottom:1px}
+.ticket-passenger-breakdown-text{font-size:.95rem;color:#555}
+.footer-control-panel{width:100%;text-align:center;margin-top:auto}
+.security-color-strip-banner{width:100%;height:12px;display:flex;border-radius:2px;margin-bottom:22px;overflow:hidden;animation:blink 1.2s infinite ease-in-out}
+.color-block-1{width:33.33%;background:#5472c4}.color-block-2{width:33.33%;background:#7a1515}.color-block-3{width:33.33%;background:#9b42f5}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.progress-track-bg-line{width:100%;height:4px;background:#f2f2f2;border-radius:2px;margin-bottom:14px}
+.progress-track-fill-line{height:100%;width:100%;background:#007aff;border-radius:2px}
+.time-countdown-string{font-size:1.35rem;font-weight:600;color:#000;margin-bottom:2px}
+.validator-instructions-anchor{font-size:.82rem;color:#555;text-decoration:underline}
+.control-configuration-panel{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:360px;box-shadow:0 4px 20px rgba(0,0,0,.06);border:1px solid #e5e7eb}
+.control-configuration-panel h2{font-size:1.2rem;color:#111;margin-bottom:18px;border-bottom:2px solid #f3f4f6;padding-bottom:8px}
+.form-group-field{margin-bottom:14px}
+.form-group-field label{display:block;font-size:.82rem;font-weight:600;color:#4b5563;margin-bottom:6px}
+.form-group-field input{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:.95rem;outline:none}
+.form-group-field input:focus{border-color:#2b88d9}
+.form-group-field input[type=color]{height:40px;padding:2px;cursor:pointer}
+.action-submit-btn{background:#2b88d9;color:#fff;border:0;width:100%;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;font-size:.95rem;margin-top:10px}
+.note{font-size:.75rem;color:#6b7280;line-height:1.4;margin-top:14px}
+@media(max-width:768px){.workspace-wrapper{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<div class="workspace-wrapper">
+  <div class="app-screen-viewport">
+    <div class="app-header-title">One Way Ticket — DEMO</div>
+    <div class="demo-label">DEMO</div>
+    <div class="ticket-container-box">
+      <div class="qr-border-frame" id="viewQrOutlineFrame">
+        <div class="qr-placeholder"><span>QR DEMO</span></div>
+      </div>
+      <div class="action-subtext">Tap to enlarge</div>
+      <div class="dashed-split-separator"></div>
+      <div class="text-data-alignment-box">
+        <div class="ticket-badge-alert-text">INTERSTATE</div>
+        <div class="ticket-zone-id-value" id="viewZoneDisplay">2</div>
+        <div class="ticket-classification-label">ZONE RIDE</div>
+        <div class="ticket-passenger-breakdown-text" id="viewPassengerDisplay">1 Adult</div>
+      </div>
+      <div class="footer-control-panel">
+        <div class="security-color-strip-banner">
+          <div class="color-block-1" id="blockTargetColor1"></div>
+          <div class="color-block-2" id="blockTargetColor2"></div>
+          <div class="color-block-3" id="blockTargetColor3"></div>
+        </div>
+        <div class="progress-track-bg-line"><div class="progress-track-fill-line"></div></div>
+        <div class="time-countdown-string">Expires in <span id="viewClockDigits">55:01</span></div>
+        <div class="validator-instructions-anchor">Demo UI — not a valid transit ticket</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="control-configuration-panel">
+    <h2>Ticket Control Panel</h2>
+    <div class="form-group-field">
+      <label for="panelInputZone">Zone Number</label>
+      <input type="number" id="panelInputZone" value="2" min="1" max="99">
+    </div>
+    <div class="form-group-field">
+      <label for="panelInputPassenger">Passenger Breakdown Text</label>
+      <input type="text" id="panelInputPassenger" value="1 Adult">
+    </div>
+    <div class="form-group-field">
+      <label for="panelQrColorSelect">QR Code Outline Color</label>
+      <input type="color" id="panelQrColorSelect" value="#a6a6a6">
+    </div>
+    <button class="action-submit-btn" id="applyBtn">Apply Changes</button>
+    <p class="note">This is a visual demonstration only. It does not generate a valid transit ticket, fare product, or scannable ticket credential.</p>
+  </div>
+</div>
+
+<script>
+const zone=document.getElementById("panelInputZone");
+const passenger=document.getElementById("panelInputPassenger");
+const qrColor=document.getElementById("panelQrColorSelect");
+const zoneView=document.getElementById("viewZoneDisplay");
+const passengerView=document.getElementById("viewPassengerDisplay");
+const frame=document.getElementById("viewQrOutlineFrame");
+
+function applyChanges(){
+  zoneView.textContent=zone.value || "2";
+  passengerView.textContent=passenger.value || "1 Adult";
+  frame.style.borderColor=qrColor.value;
+}
+document.getElementById("applyBtn").addEventListener("click",applyChanges);
+
+let seconds=55*60+1;
+function updateClock(){
+  const m=Math.floor(seconds/60);
+  const s=seconds%60;
+  document.getElementById("viewClockDigits").textContent =
+    String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  if(seconds>0) seconds--;
+}
+updateClock();
+setInterval(updateClock,1000);
+</script>
+</body>
+</html>
