@@ -27,17 +27,18 @@ body{background:#eceef3;display:flex;justify-content:center;align-items:center;m
 .text-data-alignment-box{text-align:center;width:100%}
 .clickable{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .12s ease,opacity .12s ease}
 .clickable:active{transform:scale(.94);opacity:.7}
-.ticket-badge-alert-text{color:#fc353e;font-size:1.875rem;font-weight:700;margin-bottom:2px}
+.ticket-badge-alert-text{color:#000;font-size:1.875rem;font-weight:700;margin-bottom:2px}
+.ticket-badge-alert-text.is-interstate{color:#fc353e}
 .ticket-zone-id-value{font-size:2.125rem;font-weight:700;color:#000;line-height:1.1}
 .ticket-classification-label{font-size:1.3125rem;font-weight:600;color:#000;margin-bottom:1px}
 .ticket-passenger-breakdown-text{font-size:.875rem;font-weight:300;color:#000}
 
 .footer-control-panel{width:100%;text-align:center;margin-top:auto}
-.security-color-strip-banner{width:90%;max-width:350px;height:10px;display:flex;margin:0 auto 22px;overflow:hidden;animation:blink 1.6s infinite ease-in-out}
+.security-color-strip-banner{width:90%;max-width:350px;height:10px;display:flex;margin:0 auto 22px;overflow:hidden;animation:blink 3s infinite ease-in-out}
 .color-block-1{flex:1;background:#bce65f}
 .color-block-2{flex:1;background:#de3461}
 .color-block-3{flex:1;background:#8fcd94}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes blink{0%,33%{opacity:1}100%{opacity:0}}
 
 .progress-track-bg-line{width:80%;max-width:294px;height:6px;background:#eee;border-radius:4px;margin:0 auto 14px;position:relative;overflow:hidden}
 .progress-track-fill-line{position:absolute;left:0;top:0;height:100%;width:0%;background:#007aff;border-radius:4px;transition:width 1s linear}
@@ -49,8 +50,7 @@ body{background:#eceef3;display:flex;justify-content:center;align-items:center;m
 <body>
 <div class="ticket-shell">
   <div class="app-screen-viewport">
-    <div class="app-header-title">One Way Ticket &mdash; DEMO</div>
-    <div class="demo-label">DEMO</div>
+    <div class="app-header-title">One Way Ticket</div>
     <div class="ticket-container-box">
       <div class="qr-border-frame">
         <canvas class="qr-canvas" id="qrCanvas" width="195" height="195"></canvas>
@@ -58,7 +58,7 @@ body{background:#eceef3;display:flex;justify-content:center;align-items:center;m
       <div class="action-subtext">Tap to enlarge</div>
       <div class="dashed-split-separator"></div>
       <div class="text-data-alignment-box">
-        <div class="ticket-badge-alert-text clickable" id="viewBadgeText" title="Tap to toggle">INTERSTATE</div>
+        <div class="ticket-badge-alert-text is-interstate clickable" id="viewBadgeText" title="Tap to toggle">INTERSTATE</div>
         <div class="ticket-zone-id-value clickable" id="viewZoneDisplay" title="Tap to change zone">2</div>
         <div class="ticket-classification-label clickable" id="viewClassLabel" title="Tap to change zone">ZONE RIDE</div>
         <div class="ticket-passenger-breakdown-text clickable" id="viewPassengerDisplay" title="Tap to add passengers">1 Adult</div>
@@ -71,7 +71,7 @@ body{background:#eceef3;display:flex;justify-content:center;align-items:center;m
         </div>
         <div class="progress-track-bg-line"><div class="progress-track-fill-line" id="progressFill"></div></div>
         <div class="time-countdown-string">Expires in <span id="viewClockDigits">60:00</span></div>
-        <div class="validator-instructions-anchor">Demo UI &mdash; not a valid transit ticket</div>
+        <div class="validator-instructions-anchor">View Onboard Validator Instructions</div>
       </div>
     </div>
   </div>
@@ -127,6 +127,7 @@ let isInterstate=true;
 badgeEl.addEventListener('click',()=>{
   isInterstate=!isInterstate;
   badgeEl.textContent=isInterstate?'INTERSTATE':'INTRASTATE';
+  badgeEl.classList.toggle('is-interstate',isInterstate);
 });
 
 let zoneNum=2;
